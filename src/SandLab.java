@@ -7,6 +7,8 @@ public class SandLab
   //add constants for particle types here
   public static final int EMPTY = 0;
   public static final int METAL = 1;
+  public static final int SAND = 2;
+  public static final int WATER = 3;
   
   //do not add any more fields below
   private int[][] grid;
@@ -23,10 +25,12 @@ public class SandLab
     String[] names;
     // Change this value to add more buttons
     //Step 4,6
-    names = new String[2];
+    names = new String[4];
     // Each value needs a name for the button
     names[EMPTY] = "Empty";
     names[METAL] = "Metal";
+    names[SAND] = "Sand";
+    names[WATER] = "Water";
     
     //1. Add code to initialize the data member grid with same dimensions
     grid = new int[numRows][numCols];
@@ -49,20 +53,43 @@ public class SandLab
    //Hint - use a nested for loop
 	  for (int i = 0; i < grid.length; i++)
 	  {
-		  for (int eye = 0; eye < grid[eye].length; eye++)
+		  for (int eye = 0; eye < grid[0].length; eye++)
 		  {
-			  if (grid[i][eye] == 0)
+			  if (grid[i][eye] == EMPTY)
 			  {
 				  display.setColor(i, eye, Color.BLACK);
 			  }
 			  
-			  else if (grid[i][eye] == 1)
+			  else if (grid[i][eye] == METAL)
 			  {
 				  display.setColor(i, eye, Color.GRAY);
+			  }
+			  
+			  else if (grid[i][eye] == SAND)
+			  {
+				  display.setColor(i, eye, Color.yellow);
+			  }
+			  
+			  else if (grid[i][eye] == WATER)
+			  {
+				  display.setColor(i, eye, Color.BLUE);
 			  }
 		  }
 	  }
     
+  }
+  
+  public boolean checkBounds(int row, int col)
+  {
+	  if (row < grid.length && row > 0 && col < grid.length && col > 0)
+	  {
+		  return true;
+	  }
+	  
+	  else
+	  {
+		  return false;
+	  }
   }
 
   //Step 5,7
@@ -74,8 +101,60 @@ public class SandLab
     //The scalar refers to how big the value could be
     //int someRandom = (int) (Math.random() * scalar)
     //remember that you need to watch for the edges of the array
-    
-    
+	  
+	  int randomR = (int) (Math.random() * grid.length - 1);
+	  int randomC = (int) (Math.random() * grid[0].length - 1);
+	  
+	  if (checkBounds(randomR, randomC) == true && 
+			  grid[randomR][randomC] == SAND && grid[randomR + 1][randomC] == EMPTY || 
+			  grid[randomR + 1][randomC] == WATER)
+	  {
+		  grid[randomR][randomC] = EMPTY;
+		  grid[randomR + 1][randomC] = SAND;
+	  }
+	  
+	  else if (checkBounds(randomR, randomC) == true && grid[randomR][randomC] == WATER)
+	  {
+		  int random = (int) (Math.random() * 3);
+		  
+		  switch (random)
+		  {
+		  	 case 0:
+		  	 {
+		  		 if(checkBounds(randomR, randomC) == true && grid[randomR + 1][randomC] == EMPTY )
+		  		 {
+		  			 grid[randomR][randomC] = EMPTY;
+		  			 grid[randomR + 1][randomC] = WATER;
+		  		 }
+		  		 break;
+		  	 }
+			   
+			  case 1:
+			  {
+				  if (checkBounds(randomR, randomC) == true && grid[randomR][randomC - 1] == EMPTY)
+				  {
+					  grid[randomR][randomC] = EMPTY;
+					  grid[randomR][randomC - 1] = WATER;
+				  }
+				 break;
+			  }
+			  
+			  case 2:
+			  {
+				  if (checkBounds(randomR, randomC) == true && grid[randomR][randomC + 1] == EMPTY)
+				  {
+					  grid[randomR][randomC] = EMPTY;
+					  grid[randomR][randomC + 1] = WATER;
+				  }
+				  break;
+			  }
+			  
+			  default:
+				  System.out.println("Something is broken.");
+				  break;
+				  
+		  }
+	  }
   }
   
   //do not modify this method!
