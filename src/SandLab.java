@@ -9,6 +9,7 @@ public class SandLab
   public static final int METAL = 1;
   public static final int SAND = 2;
   public static final int WATER = 3;
+  public static final int LEVIBLOCK = 4;
   
   //do not add any more fields below
   private int[][] grid;
@@ -25,12 +26,13 @@ public class SandLab
     String[] names;
     // Change this value to add more buttons
     //Step 4,6
-    names = new String[4];
+    names = new String[7];
     // Each value needs a name for the button
     names[EMPTY] = "Empty";
     names[METAL] = "Metal";
     names[SAND] = "Sand";
     names[WATER] = "Water";
+    names[LEVIBLOCK] = "Leviblock";
     
     //1. Add code to initialize the data member grid with same dimensions
     grid = new int[numRows][numCols];
@@ -74,6 +76,11 @@ public class SandLab
 			  {
 				  display.setColor(i, eye, Color.BLUE);
 			  }
+			  
+			  else if (grid[i][eye] == LEVIBLOCK)
+			  {
+				  display.setColor(i, eye, Color.ORANGE);
+			  }
 		  }
 	  }
     
@@ -106,8 +113,8 @@ public class SandLab
 	  int randomC = (int) (Math.random() * grid[0].length - 1);
 	  
 	  if (checkBounds(randomR, randomC) == true && 
-			  grid[randomR][randomC] == SAND && grid[randomR + 1][randomC] == EMPTY || 
-			  grid[randomR + 1][randomC] == WATER)
+			  grid[randomR][randomC] == SAND &&
+			  grid[randomR + 1][randomC] == EMPTY)
 	  {
 		  grid[randomR][randomC] = EMPTY;
 		  grid[randomR + 1][randomC] = SAND;
@@ -152,9 +159,40 @@ public class SandLab
 			  default:
 				  System.out.println("Something is broken.");
 				  break;
-				  
-		  }
-	  }
+		  	}
+	  	}
+		  
+		else if (checkBounds(randomR, randomC) == true && grid[randomR][randomC] == SAND && 
+				grid[randomR + 1][randomC] == WATER)
+		{
+			grid[randomR + 1][randomC] = EMPTY;
+			grid[randomR][randomC] = SAND;
+		}
+	  	
+		else if (checkBounds(randomR, randomC) == true && 
+				grid[randomR][randomC] == LEVIBLOCK &&
+				grid[randomR - 1][randomC + 1] == EMPTY &&
+				grid[randomR - 1][randomC - 1] == EMPTY &&
+				grid[randomR + 1][randomC + 1] == METAL || 
+				grid[randomR + 1][randomC - 1] == METAL)
+		{
+			
+			if (checkBounds(randomR, randomC) == true && 
+					grid[randomR + 1][randomC + 1] != EMPTY)
+			{
+				grid[randomR][randomC] = EMPTY;
+				grid[randomR - 1][randomC + 1] = METAL;
+				grid[randomR + 1][randomC + 1] = EMPTY;
+			}
+			
+			if (checkBounds(randomR, randomC) == true && 
+					grid[randomR + 1][randomC - 1] != EMPTY)
+			{
+				grid[randomR][randomC] = EMPTY;
+				grid[randomR - 1][randomC - 1] = METAL;
+				grid[randomR + 1][randomC - 1] = EMPTY;
+			}
+		}
   }
   
   //do not modify this method!
