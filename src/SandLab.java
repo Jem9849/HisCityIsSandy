@@ -10,6 +10,7 @@ public class SandLab
   public static final int SAND = 2;
   public static final int WATER = 3;
   public static final int LEVIBLOCK = 4;
+  public static final int CLEARBLOCK = 5;
   
   //do not add any more fields below
   private int[][] grid;
@@ -33,6 +34,7 @@ public class SandLab
     names[SAND] = "Sand";
     names[WATER] = "Water";
     names[LEVIBLOCK] = "Leviblock";
+    names[CLEARBLOCK] = "Clearblock";
     
     //1. Add code to initialize the data member grid with same dimensions
     grid = new int[numRows][numCols];
@@ -80,6 +82,11 @@ public class SandLab
 			  else if (grid[i][eye] == LEVIBLOCK)
 			  {
 				  display.setColor(i, eye, Color.ORANGE);
+			  }
+			  
+			  else if (grid[i][eye] == CLEARBLOCK)
+			  {
+				  display.setColor(i, eye, Color.WHITE);
 			  }
 		  }
 	  }
@@ -170,30 +177,90 @@ public class SandLab
 		}
 	  	
 		else if (checkBounds(randomR, randomC) == true && 
-				grid[randomR][randomC] == LEVIBLOCK &&
+				checkBounds(randomR + 1, randomC + 1) == true &&
+				checkBounds(randomR + 1, randomC - 1) == true &&
+				checkBounds(randomR - 1, randomC + 1) == true &&
+				checkBounds(randomR - 1, randomC - 1) == true &&
+				checkBounds(randomR + 1, randomC) == true &&
+				checkBounds(randomR - 1, randomC) == true)
+		{
+			if (grid[randomR][randomC] == LEVIBLOCK &&
 				grid[randomR - 1][randomC + 1] == EMPTY &&
 				grid[randomR - 1][randomC - 1] == EMPTY &&
 				grid[randomR + 1][randomC + 1] == METAL || 
-				grid[randomR + 1][randomC - 1] == METAL)
-		{
-			
-			if (checkBounds(randomR, randomC) == true && 
-					grid[randomR + 1][randomC + 1] != EMPTY)
+				grid[randomR + 1][randomC - 1] == METAL ||
+				grid[randomR + 1][randomC] == METAL ||
+				grid[randomR - 1][randomC] == METAL)
 			{
-				grid[randomR][randomC] = EMPTY;
-				grid[randomR - 1][randomC + 1] = METAL;
-				grid[randomR + 1][randomC + 1] = EMPTY;
-			}
-			
-			if (checkBounds(randomR, randomC) == true && 
-					grid[randomR + 1][randomC - 1] != EMPTY)
-			{
-				grid[randomR][randomC] = EMPTY;
-				grid[randomR - 1][randomC - 1] = METAL;
-				grid[randomR + 1][randomC - 1] = EMPTY;
+				if (checkBounds(randomR, randomC) == true &&
+						grid[randomR][randomC] == LEVIBLOCK &&
+						grid[randomR + 1][randomC + 1] != EMPTY)
+				{
+					grid[randomR][randomC] = EMPTY;
+					grid[randomR - 1][randomC + 1] = METAL;
+					grid[randomR + 1][randomC + 1] = EMPTY;
+				}
+				
+				if (checkBounds(randomR, randomC) == true && 
+						grid[randomR][randomC] == LEVIBLOCK &&
+						grid[randomR + 1][randomC - 1] != EMPTY)
+				{
+					grid[randomR][randomC] = EMPTY;
+					grid[randomR - 1][randomC - 1] = METAL;
+					grid[randomR + 1][randomC - 1] = EMPTY;
+				}
+				
+				if (checkBounds(randomR, randomC) == true &&
+						grid[randomR][randomC] == LEVIBLOCK &&
+						grid[randomR + 1][randomC] == METAL)
+				{
+					grid[randomR][randomC] = METAL;
+					grid[randomR + 1][randomC] = EMPTY;
+				}
+				
+				if (checkBounds(randomR, randomC) == true &&
+						checkBounds(randomR - 2, randomC) == true && 
+						grid[randomR][randomC] == LEVIBLOCK &&
+						grid[randomR - 1][randomC] == METAL)
+				{
+					grid[randomR][randomC] = EMPTY;
+					grid[randomR - 1][randomC] = EMPTY;
+					grid[randomR - 2][randomC] = METAL;
+				}
 			}
 		}
-  }
+	  
+	  	if (checkBounds(randomR, randomC) == true &&
+	  			grid[randomR + 1][randomC] == EMPTY
+	  			&& grid[randomR][randomC] == CLEARBLOCK)
+	  	{
+	  		grid[randomR][randomC] = EMPTY;
+	  		grid[randomR + 1][randomC] = CLEARBLOCK;
+	  	}
+	  
+		if (checkBounds(randomR, randomC) == true &&
+				grid[randomR + 1][randomC] == EMPTY &&
+				grid[randomR][randomC] == LEVIBLOCK)
+		{
+			grid[randomR][randomC] = EMPTY;
+			grid[randomR + 1][randomC] = LEVIBLOCK;
+		}
+		
+		if (checkBounds(randomR, randomC) == true &&
+				grid[randomR][randomC] == CLEARBLOCK)
+		{
+			if (grid[randomR][randomC] != EMPTY)
+			{
+				for (int i = 0; i < grid.length; i++)
+				{
+					for (int b = 0; b < grid[i].length; b++)
+					{
+						grid[i][b] = EMPTY;
+					}
+				}
+			}
+		}
+	}
   
   //do not modify this method!
   public void run()
